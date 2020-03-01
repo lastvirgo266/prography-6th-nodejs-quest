@@ -12,15 +12,17 @@ module.exports = (sequelize, DataTypes)=>(
         },
 
         tags:{
-            type : DataTypes.ARRAY(DataTypes.STRING(50)),
+            type : DataTypes.STRING(500),
             allowNull : true,
         },
+
 
         isCompleted : {
             type : DataTypes.BOOLEAN(),
             allowNull : false,
-            defaultValue : false,
+            defaultValue : 0,
         }
+
     },
 
         {

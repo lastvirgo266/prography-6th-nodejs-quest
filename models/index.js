@@ -38,10 +38,10 @@ const sequelize = new Sequelize(
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.Post = require("./todo")(sequelize, Sequelize);
+db.Todo = require("./todo")(sequelize, Sequelize);
 db.Comment = require("./commnet")(sequelize, Sequelize);
 
-db.Post.hasMany(db.Comment);
-db.Comment.belongsTo(db.Post);
+db.Todo.hasMany(db.Comment);
+db.Comment.belongsTo(db.Todo);
 
 module.exports = db;
