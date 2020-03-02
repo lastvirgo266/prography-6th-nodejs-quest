@@ -13,7 +13,7 @@ router.post('/', (req,res,next)=>{
         Todo.create({
             title,
             description,
-            tags : JSON.stringify(tags)
+            tags
         })
         .then(result =>{
             return res.status(200).json(result)
