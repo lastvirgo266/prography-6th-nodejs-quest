@@ -91,7 +91,7 @@ router.delete('/:id', (req,res,next)=>{
     Todo.destroy({where : {id : req.params.id}})
     .then(()=>{
         return res.status(200).json({
-            msg : "suceess"
+            msg : "success"
         });
     })
     .catch(err=>{
