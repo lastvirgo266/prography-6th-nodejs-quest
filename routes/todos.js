@@ -188,4 +188,33 @@ router.put('/:todoId/comments/:commentId', (req,res,next)=>{
     })
 });
 
+
+//Delete Comment
+router.delete('/:todoId/comments/:commentId', (req,res,next)=>{
+
+    Comment.findAll({where : {todoId : req.params.todoId}})
+    .then((results) =>{
+        Comment.destroy(
+        {where : {id : results[req.params.commentId-1].id}}
+        )
+        .then(()=>{
+            return res.status(200).json({
+                msg : "success"
+            });
+        })
+        .error(err =>{
+            console.error(err);
+            return res.status(500).json({
+                msg : "오류!"
+            })
+        })
+    })
+    .catch(err=>{
+        console.error(err);
+        return res.status(500).json({
+            msg : "존재하지 않습니다."
+        })
+    })
+});
+
 module.exports = router;
