@@ -142,10 +142,10 @@ router.get('/:id/comments', (req,res,next)=>{
 
 //Read Specify comments
 router.get('/:todoId/comments/:commentId', (req,res,next)=>{
-
-    Comment.findAll({where : {todoId : req.params.todoId}})
-    .then((result) =>{
-        return res.status(200).json(result[req.params.commentId-1]);
+    Comment.findOne({ where : {id : req.params.commentId, todoId : req.params.todoId},
+        attributes: { exclude: ['todoId'] } })
+    .then(result=>{
+        return res.status(200).json(result);
     })
     .catch(err=>{
         console.error(err);
@@ -159,26 +159,16 @@ router.get('/:todoId/comments/:commentId', (req,res,next)=>{
 //Revise comment
 router.put('/:todoId/comments/:commentId', (req,res,next)=>{
     const {contents} = req.body;
-
-    Comment.findAll({where : {todoId : req.params.todoId}})
-    .then((results) =>{
-        Comment.update({
-            contents
-        },
-        {where : {id : results[req.params.commentId-1].id}}
-        )
-        .then(()=>{
-            return Comment.findByPk(results[req.params.commentId-1].id);
-        })
-        .then(result=>{
-            return res.status(200).json(result);
-        })
-        .error(err =>{
-            console.error(err);
-            return res.status(500).json({
-                msg : "오류!"
-            })
-        })
+    Comment.update({
+        contents
+     },{ where : {id : req.params.commentId, todoId : req.params.todoId} })
+    .then(()=>{
+        return Comment.findByPk(req.params.commentId,{
+            attributes: { exclude: ['todoId'] }
+        });
+    })
+    .then(result=>{
+        return res.status(200).json(result);
     })
     .catch(err=>{
         console.error(err);
@@ -191,23 +181,12 @@ router.put('/:todoId/comments/:commentId', (req,res,next)=>{
 
 //Delete Comment
 router.delete('/:todoId/comments/:commentId', (req,res,next)=>{
-
-    Comment.findAll({where : {todoId : req.params.todoId}})
-    .then((results) =>{
-        Comment.destroy(
-        {where : {id : results[req.params.commentId-1].id}}
-        )
-        .then(()=>{
-            return res.status(200).json({
-                msg : "success"
-            });
-        })
-        .error(err =>{
-            console.error(err);
-            return res.status(500).json({
-                msg : "오류!"
-            })
-        })
+    Comment.destroy({ where : {id : req.params.commentId, todoId : req.params.todoId},
+        attributes: { exclude: ['todoId'] } })
+    .then(result=>{
+        return res.status(200).json({
+            msg : "success"
+        });
     })
     .catch(err=>{
         console.error(err);
