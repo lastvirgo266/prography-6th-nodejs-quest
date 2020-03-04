@@ -5,6 +5,8 @@ const router = express.Router();
 
 
 /* Todos API  */
+
+//post todo
 router.post('/', (req,res,next)=>{
 
     console.log(req.body);
@@ -13,9 +15,10 @@ router.post('/', (req,res,next)=>{
         Todo.create({
             title,
             description,
-            tags
+            tags : JSON.stringify(tags)
         })
         .then(result =>{
+            result.tags = JSON.parse(result.tags);
             return res.status(200).json(result)
         })
         .catch(err =>{
@@ -25,9 +28,14 @@ router.post('/', (req,res,next)=>{
 
 });
 
+//Get all todos
 router.get('/', (req,res,next)=>{
     Todo.findAll()
     .then((result) =>{
+        
+        for(var i=0; i< result.length; i++)
+            result[i].tags = JSON.parse(result[i].tags);
+
         return res.status(200).json(result);
     })
     .catch(err=>{
@@ -37,7 +45,9 @@ router.get('/', (req,res,next)=>{
 });
 
 
+//Get specify todo
 router.get('/:id', (req,res,next)=>{
+<<<<<<< HEAD
 
     console.log(req.query);
 
@@ -67,9 +77,21 @@ router.get('/:id', (req,res,next)=>{
             return res.status(500);
         })
     }
+=======
+    Todo.findOne({where : {id : req.params.id}})
+    .then(result =>{
+        result.tags = JSON.parse(result.tags);
+        return res.status(200).json(result);
+    })
+    .catch(err=>{
+        console.error(err);
+        return res.status(500);
+    })
+>>>>>>> master
 });
 
 
+//update todo
 router.put('/:id', (req,res,next)=>{
     const { title, description, tags } = req.body;
     Todo.update({
@@ -92,12 +114,14 @@ router.put('/:id', (req,res,next)=>{
 });
 
 
+//Complete todo
 router.put('/:id/complete', (req,res,next)=>{
     Todo.update({ 
         isCompleted : 1,
     },{where : {id : req.params.id}})
     .then(() => {return Todo.findByPk(req.params.id)})
     .then(result =>{
+        result.tags = JSON.parse(result.tags);
         return res.status(200).json(result);
     })
     .catch(err=>{
@@ -107,7 +131,7 @@ router.put('/:id/complete', (req,res,next)=>{
 });
 
 
-
+//Delete todo
 router.delete('/:id', (req,res,next)=>{
     Todo.destroy({where : {id : req.params.id}})
     .then(()=>{
