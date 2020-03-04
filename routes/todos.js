@@ -38,14 +38,35 @@ router.get('/', (req,res,next)=>{
 
 
 router.get('/:id', (req,res,next)=>{
-    Todo.findOne({where : {id : req.params.id}})
-    .then(result =>{
-        return res.status(200).json(result);
-    })
-    .catch(err=>{
-        console.error(err);
-        return res.status(500);
-    })
+
+    console.log(req.query);
+
+    if(req.query){
+        console.log(qs.stringify(req.query));
+
+        Todo.findOne({where : {id : req.params.id}},{
+            order: [ [qs.stringify(req.query),req.query.order] ]
+        })
+        .then(result =>{
+            return res.status(200).json(result);
+        })
+        .catch(err=>{
+            console.error(err);
+            return res.status(500);
+        });
+            
+    }
+
+    else{
+        Todo.findOne({where : {id : req.params.id}})
+        .then(result =>{
+            return res.status(200).json(result);
+        })
+        .catch(err=>{
+            console.error(err);
+            return res.status(500);
+        })
+    }
 });
 
 
