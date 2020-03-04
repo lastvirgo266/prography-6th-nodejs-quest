@@ -29,7 +29,7 @@ router.post('/', (req,res,next)=>{
 
 });
 
-//Get all todos
+//Get all todos(Add use the order query)
 router.get('/', (req,res,next)=>{
     if(req.query.order != undefined){
         console.log(req.query.order);
