@@ -106,13 +106,24 @@ router.get('/', (req,res,next)=>{
 
     //search tags
     else if(req.query.tags != undefined){
-        console.log(req.query.order);
-        let orderKey= Object.keys(req.query.order)[0];
-        var orderValue = Object.values(req.query.order)[0];
+        console.log(req.query.tags);
+        let parsedKeywords = Object.values(req.query.tags);
+        let keywords = [];
+        
+        console.log(parsedKeywords);
+        for(var i =0; i<parsedKeywords.length; i++){
+            keywords[i] = '%' + parsedKeywords[i] +'%';
+        }
 
         Todo.findAll({
-            order : [[orderKey, orderValue]]
-        })
+            where : {
+                [op.in] : {
+                    tags :{ 
+                        [op.like] : keywords
+                    }
+                }
+           }
+         })
         .then((result) =>{
             
             for(var i=0; i< result.length; i++)
