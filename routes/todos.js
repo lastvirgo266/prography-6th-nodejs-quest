@@ -1,5 +1,6 @@
 const express = require('express');
 const {Todo, Comment} = require('../models');
+const qs = require('qs');
 
 const router = express.Router();
 
@@ -30,64 +31,57 @@ router.post('/', (req,res,next)=>{
 
 //Get all todos
 router.get('/', (req,res,next)=>{
-    Todo.findAll()
-    .then((result) =>{
-        
-        for(var i=0; i< result.length; i++)
-            result[i].tags = JSON.parse(result[i].tags);
+    if(req.query.order != undefined){
+        console.log(req.query.order);
+        var orderKey= Object.keys(req.query.order)[0];
+        var orderValue = Object.values(req.query.order)[0];
 
-        return res.status(200).json(result);
-    })
-    .catch(err=>{
-        console.error(err);
-        return res.status(500);
-    })
+        Todo.findAll({
+            order : [[orderKey, orderValue]]
+        })
+        .then((result) =>{
+            
+            for(var i=0; i< result.length; i++)
+                result[i].tags = JSON.parse(result[i].tags);
+
+            return res.status(200).json(result);
+        })
+        .catch(err=>{
+            console.error(err);
+            return res.status(500);
+        })
+    }
+
+
+    else{
+        Todo.findAll()
+        .then((result) =>{
+            
+            for(var i=0; i< result.length; i++)
+                result[i].tags = JSON.parse(result[i].tags);
+
+            return res.status(200).json(result);
+        })
+        .catch(err=>{
+            console.error(err);
+            return res.status(500);
+        })
+    }
 });
 
 
 //Get specify todo
 router.get('/:id', (req,res,next)=>{
-<<<<<<< HEAD
 
-    console.log(req.query);
-
-    if(req.query){
-        console.log(qs.stringify(req.query));
-
-        Todo.findOne({where : {id : req.params.id}},{
-            order: [ [qs.stringify(req.query),req.query.order] ]
-        })
-        .then(result =>{
-            return res.status(200).json(result);
-        })
-        .catch(err=>{
-            console.error(err);
-            return res.status(500);
-        });
-            
-    }
-
-    else{
-        Todo.findOne({where : {id : req.params.id}})
-        .then(result =>{
-            return res.status(200).json(result);
-        })
-        .catch(err=>{
-            console.error(err);
-            return res.status(500);
-        })
-    }
-=======
     Todo.findOne({where : {id : req.params.id}})
     .then(result =>{
-        result.tags = JSON.parse(result.tags);
         return res.status(200).json(result);
     })
     .catch(err=>{
         console.error(err);
         return res.status(500);
     })
->>>>>>> master
+
 });
 
 
